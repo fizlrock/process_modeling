@@ -30,8 +30,7 @@ dependencies {
     runtimeOnly 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // This dependency is used by the application.
-    implementation libs.guava
+    implementation 'org.yaml:snakeyaml:2.0' // Проверьте версию
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

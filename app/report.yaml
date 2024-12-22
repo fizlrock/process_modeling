@@ -1,0 +1,281 @@
+snapshots:
+- aliveProcesses: 2
+  params:
+    aliveCells: 1
+    cellsAreBurn: 1
+    livingConditions: 0.8447092145271673
+  plannedEventCount: 2
+  time: 6
+- aliveProcesses: 4
+  params:
+    aliveCells: 3
+    cellsAreBurn: 2
+    livingConditions: 0.8447092145271673
+  plannedEventCount: 6
+  time: 11
+- aliveProcesses: 6
+  params:
+    aliveCells: 5
+    cellsAreBurn: 2
+    livingConditions: 0.8447092145271673
+  plannedEventCount: 11
+  time: 12
+- aliveProcesses: 7
+  params:
+    aliveCells: 6
+    cellsAreBurn: 4
+    livingConditions: 0.7018548581586925
+  plannedEventCount: 10
+  time: 16
+- aliveProcesses: 7
+  params:
+    aliveCells: 6
+    cellsAreBurn: 0
+    livingConditions: 0.7018548581586925
+  plannedEventCount: 15
+  time: 17
+- aliveProcesses: 11
+  params:
+    aliveCells: 10
+    cellsAreBurn: 4
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 15
+  time: 18
+- aliveProcesses: 12
+  params:
+    aliveCells: 11
+    cellsAreBurn: 4
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 19
+  time: 19
+- aliveProcesses: 17
+  params:
+    aliveCells: 16
+    cellsAreBurn: 8
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 38
+  time: 20
+- aliveProcesses: 24
+  params:
+    aliveCells: 23
+    cellsAreBurn: 14
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 43
+  time: 21
+- aliveProcesses: 21
+  params:
+    aliveCells: 20
+    cellsAreBurn: 0
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 43
+  time: 23
+- aliveProcesses: 23
+  params:
+    aliveCells: 22
+    cellsAreBurn: 2
+    livingConditions: 0.6835158714273735
+  plannedEventCount: 42
+  time: 24
+- aliveProcesses: 27
+  params:
+    aliveCells: 26
+    cellsAreBurn: 4
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 49
+  time: 25
+- aliveProcesses: 45
+  params:
+    aliveCells: 44
+    cellsAreBurn: 18
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 70
+  time: 26
+- aliveProcesses: 67
+  params:
+    aliveCells: 66
+    cellsAreBurn: 28
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 103
+  time: 27
+- aliveProcesses: 91
+  params:
+    aliveCells: 90
+    cellsAreBurn: 40
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 143
+  time: 28
+- aliveProcesses: 98
+  params:
+    aliveCells: 97
+    cellsAreBurn: 14
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 160
+  time: 29
+- aliveProcesses: 86
+  params:
+    aliveCells: 85
+    cellsAreBurn: 12
+    livingConditions: 0.5683088906680631
+  plannedEventCount: 169
+  time: 30
+- aliveProcesses: 86
+  params:
+    aliveCells: 85
+    cellsAreBurn: 18
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 186
+  time: 31
+- aliveProcesses: 72
+  params:
+    aliveCells: 71
+    cellsAreBurn: 0
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 197
+  time: 32
+- aliveProcesses: 57
+  params:
+    aliveCells: 56
+    cellsAreBurn: 0
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 193
+  time: 33
+- aliveProcesses: 44
+  params:
+    aliveCells: 43
+    cellsAreBurn: 0
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 166
+  time: 34
+- aliveProcesses: 32
+  params:
+    aliveCells: 31
+    cellsAreBurn: 0
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 142
+  time: 35
+- aliveProcesses: 23
+  params:
+    aliveCells: 22
+    cellsAreBurn: 0
+    livingConditions: 0.48742807587034476
+  plannedEventCount: 115
+  time: 36
+- aliveProcesses: 22
+  params:
+    aliveCells: 21
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 83
+  time: 37
+- aliveProcesses: 18
+  params:
+    aliveCells: 17
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 61
+  time: 38
+- aliveProcesses: 18
+  params:
+    aliveCells: 17
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 44
+  time: 39
+- aliveProcesses: 13
+  params:
+    aliveCells: 12
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 31
+  time: 40
+- aliveProcesses: 9
+  params:
+    aliveCells: 8
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 22
+  time: 41
+- aliveProcesses: 9
+  params:
+    aliveCells: 8
+    cellsAreBurn: 0
+    livingConditions: 0.44025704500937346
+  plannedEventCount: 18
+  time: 42
+- aliveProcesses: 7
+  params:
+    aliveCells: 6
+    cellsAreBurn: 0
+    livingConditions: 0.4245598002886614
+  plannedEventCount: 14
+  time: 43
+- aliveProcesses: 7
+  params:
+    aliveCells: 6
+    cellsAreBurn: 0
+    livingConditions: 0.4245598002886614
+  plannedEventCount: 10
+  time: 44
+- aliveProcesses: 3
+  params:
+    aliveCells: 2
+    cellsAreBurn: 0
+    livingConditions: 0.4245598002886614
+  plannedEventCount: 6
+  time: 45
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.4245598002886614
+  plannedEventCount: 1
+  time: 47
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.35819706315659605
+  plannedEventCount: 1
+  time: 48
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.3496679363983024
+  plannedEventCount: 1
+  time: 54
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.353194422266174
+  plannedEventCount: 1
+  time: 60
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.3012578425595579
+  plannedEventCount: 1
+  time: 66
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.27091818634154413
+  plannedEventCount: 1
+  time: 72
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.23366158610472754
+  plannedEventCount: 1
+  time: 78
+- aliveProcesses: 1
+  params:
+    aliveCells: 0
+    cellsAreBurn: 0
+    livingConditions: 0.18889781400030947
+  plannedEventCount: 1
+  time: 84

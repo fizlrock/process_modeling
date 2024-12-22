@@ -3,8 +3,47 @@
  */
 package org.example;
 
+import static org.example.Snapshoter.takeSnapshot;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
+
 public class App {
   public static void main(String[] args) {
-    new FirstModel().run();
+    var m = new LifeModel();
+
+    class Report {
+      public List<ModelSnapshot> snapshots = new ArrayList<>();
+    }
+
+    var snapshots = new Report();
+
+    for (int i = 0; i < 40; i++) {
+      m.makeTimeStep();
+      snapshots.snapshots.add(takeSnapshot(m));
+    }
+
+    // Настройки форматирования YAML
+    DumperOptions options = new DumperOptions();
+    options.setPrettyFlow(true); // Красивый формат
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // Блочный стиль (читаемый)
+
+    Yaml yaml = new Yaml(options);
+
+    // Сериализация объекта в YAML и сохранение в файл
+    try (FileWriter writer = new FileWriter("report.yaml")) {
+      var data = yaml.dumpAs(snapshots, Tag.MAP, FlowStyle.BLOCK);
+      writer.write(data);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 }

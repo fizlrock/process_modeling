@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAML Graph Viewer</title>
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #chart {
+      width: 100%;
+      height: 500px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>YAML Graph Viewer</h1>
+  <p>Введите YAML ниже, и он будет обработан для построения графика:</p>
+  <textarea id="yamlInput">
+    snapshots:
+    - aliveProcesses: 1
+    params:
+    anotherField: HEY
+    livingConditions: 0.5027910989856488
+    plannedEventCount: 1
+    time: 6
+    - aliveProcesses: 2
+    params:
+    extraParam: 42
+    livingConditions: 0.4820548273579659
+    plannedEventCount: 2
+    time: 12
+    - aliveProcesses: 3
+    params:
+    extraParam: 38
+    livingConditions: 0.4934633646541836
+    plannedEventCount: 3
+    time: 18
+  </textarea>
+  <button onclick="drawGraph()">Построить график</button>
+  <div id="chart"></div>
+
+  <script>
+    function drawGraph() {
+      // Получение YAML из текстового поля
+      const yamlInput = document.getElementById('yamlInput').value;
+
+      try {
+        // Парсинг YAML
+        const data = jsyaml.load(yamlInput);
+
+        if (!data || !data.snapshots) {
+          alert('YAML должен содержать ключ "snapshots".');
+          return;
+        }
+
+        const snapshots = data.snapshots;
+
+        // Обработка данных
+        const time = snapshots.map(item => item.time || 0);
+        const aliveProcesses = snapshots.map(item => item.aliveProcesses || 0);
+        const plannedEventCount = snapshots.map(item => item.plannedEventCount || 0);
+
+        // Трассировки для основного графика
+        const traces = [
+          {
+            x: time,
+            y: aliveProcesses,
+            mode: 'lines+markers',
+            name: 'Alive Processes'
+          },
+          {
+            x: time,
+            y: plannedEventCount,
+            mode: 'lines+markers',
+            name: 'Planned Event Count'
+          }
+        ];
+
+        // Обработка параметров из params
+        const paramKeys = new Set(); // Для сбора уникальных ключей в params
+        snapshots.forEach(item => {
+          if (item.params) {
+            Object.keys(item.params).forEach(key => {
+              paramKeys.add(key);
+            });
+          }
+        });
+
+        // Генерация графиков для каждого параметра
+        paramKeys.forEach(key => {
+          const values = snapshots.map(item => (item.params && item.params[key] !== undefined ? item.params[key] : null));
+          traces.push({
+            x: time,
+            y: values,
+            mode: 'lines+markers',
+            name: `Params: ${key}`
+          });
+        });
+
+        // Построение графика
+        const layout = {
+          title: 'Snapshots Data Graph',
+          xaxis: {title: 'Time'},
+          yaxis: {title: 'Values'}
+        };
+
+        Plotly.newPlot('chart', traces, layout);
+      } catch (error) {
+        alert('Ошибка при парсинге YAML: ' + error.message);
+      }
+    }
+  </script>
+</body>
+
+</html>

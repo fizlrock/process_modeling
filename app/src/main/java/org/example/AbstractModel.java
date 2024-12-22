@@ -2,10 +2,13 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,23 +21,33 @@ public class AbstractModel {
 
   Queue<PlannedEvent> calendar = new PriorityQueue<>();
 
+  public int getCalendarSize() {
+    return calendar.size();
+  }
+
+  public int getAliveProcesses() {
+    return aliveProcesses.size();
+  }
+
   /**
    * Словарь <Событие> - <Список процессов которые активируются>
    */
-  private Map<Object, List<ModelingProcess>> event_process_map = new HashMap<>();
+  private Map<Object, List<ModelingProcess>> event_activate_process_map = new HashMap<>();
 
-  private List<Thread> aliveProcesses = new ArrayList<>();
+  private Map<Object, List<EventRequest>> eventRequests = new HashMap<>();
+
+  private Set<Thread> aliveProcesses = new HashSet<>();
 
   {
     initProcesses();
-    log.info("Найденные процессы: {}", event_process_map);
+    info("Найденные процессы: {}", event_activate_process_map);
     planEvent(new InitEvent(), 0l);
   }
 
-  long currentTime;
+  private long currentTime;
 
   private void startProcess(ModelingProcess proc) {
-    log.debug("Запуск процесса: {}", proc.getName());
+    debug("Запуск процесса: {}", proc.getName());
     var th = new Thread(proc.getRunnable());
     th.start();
 
@@ -45,7 +58,7 @@ public class AbstractModel {
     if (th.isAlive())
       aliveProcesses.add(th);
     else
-      log.debug("Завершение процесса: {}", proc.getName());
+      debug("Завершение процесса: {}", proc.getName());
   }
 
   /**
@@ -63,7 +76,7 @@ public class AbstractModel {
               currentTime,
               time));
 
-    log.debug("Планирование события {} на момент {} TU", event.getClass().getSimpleName(), time);
+    debug("Планирование события {} на момент {} TU", event, time);
     calendar.add(new PlannedEvent(time, event));
   }
 
@@ -76,29 +89,79 @@ public class AbstractModel {
    */
   protected <T> void waitSignal(Class<T> signal) {
     // TODO Auto-generated method stub
-
     throw new UnsupportedOperationException("Unimplemented method 'waitSignal'");
   }
 
-  protected <T> void waitEvent(Class<T> event) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'waitEvent'");
+  // TODO написать доку
+  protected <T> void waitEvent(Object o) {
+
+    var requests = eventRequests.get(o);
+
+    if (requests == null) {
+      requests = new ArrayList<>();
+      eventRequests.put(o, requests);
+    }
+
+    var eventRequest = new EventRequest(Thread.currentThread(), new Semaphore(0, true));
+    requests.add(eventRequest);
+
+    try {
+      eventRequest.sem().acquire();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 
-  public void takeEvent() {
+  private void debug(String message, Object... args) {
+    message = "time: " + currentTime + " " + message;
+    log.debug(message, args);
+  }
+
+  private void info(String message, Object... args) {
+    message = "time: " + currentTime + " " + message;
+    log.info(message, args);
+  }
+
+  private void takeEvent() {
 
     var plannedEvent = calendar.poll();
     var event = plannedEvent.event();
     currentTime = plannedEvent.time();
-    log.debug("Обработка события: {}", event.getClass().getSimpleName());
+    debug("Обработка события: {}", event);
 
     // Проверить, ждет ли кто-то событие как сигнал, если да, удалить событие и
     // вернуть из метода
 
     // Найти все методы которые ожидают события и продолжить
 
+    var requests = eventRequests.remove(event);
+    if (requests != null) {
+      debug("Возобновление методов ожидающих событие");
+
+      for (EventRequest r : requests) {
+        r.sem().release();
+        try {
+          // TODO ???
+          Thread.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
+        while ((r.th().getState() == Thread.State.RUNNABLE))
+          ;
+
+        info("state: {}", r.th().getState());
+        if (r.th().getState() == Thread.State.TERMINATED) {
+          debug("Завершение процесса");
+          aliveProcesses.remove(r.th());
+        }
+      }
+      // int queue = semaphore.getQueueLength();
+    }
+
     // Найти все методы которые активируются от события и активировать
-    var procToActive = event_process_map.get(event.getClass());
+    var procToActive = event_activate_process_map.get(event.getClass());
 
     if (procToActive != null && !procToActive.isEmpty()) {
       procToActive.stream().forEach(p -> startProcess(p));
@@ -107,15 +170,51 @@ public class AbstractModel {
     // throw new UnsupportedOperationException("Unimplemented method 'takeEvent'");
   }
 
-  public void run() {
-    while (!calendar.isEmpty())
+  public void run(long timeLimit) {
+    info("Начало моделирования");
+    while (!calendar.isEmpty() && getTime() < timeLimit)
       takeEvent();
+    info("Конец моделирования");
+    aliveProcesses.forEach(x -> x.interrupt());
+
   }
 
   public void makeTimeStep() {
+    resetValues();
+
     long st = getTime();
     while (st == getTime())
       takeEvent();
+  }
+
+  public void resetValues() {
+
+    var fields = this.getClass().getDeclaredFields();
+
+    Stream.of(fields)
+        .filter(f -> f.isAnnotationPresent(ResetOnTick.class))
+        .peek(f -> f.canAccess(this))
+        .peek(f -> log.debug("Обнуление: {}", f))
+        .peek(f -> {
+          try {
+            f.set(this, getDefaultValue(f.getType()));
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        })
+        .forEach(x -> {
+        });
+
+    ;
+
+  }
+
+  private Object getDefaultValue(@SuppressWarnings("rawtypes") Class clazz) {
+    if (clazz.equals(Long.class)) {
+      return 0l;
+    } else
+      throw new UnsupportedOperationException("Неизвестно значение по умолчанию для типа: " + clazz);
+
   }
 
   /**
@@ -136,6 +235,10 @@ public class AbstractModel {
     planEvent(signal, getTime());
   }
 
+  protected void sleep(long time) {
+    throw new UnsupportedOperationException("Unimplemented method 'sleep'");
+  }
+
   /**
    * Метод ищет методы объявленные с аннотацией MProcсess и добавляет их в
    * коллекцию event_process_map
@@ -151,19 +254,19 @@ public class AbstractModel {
             try {
               m.invoke(this);
             } catch (Exception e) {
-              throw new RuntimeException(e);
             }
           };
+
           var an = m.getAnnotation(MProccess.class);
 
           var proc = new ModelingProcess(m.getName(), runnable);
 
-          var list = event_process_map.get(an.activateOn());
+          var list = event_activate_process_map.get(an.activateOn());
           if (list == null) {
             list = new ArrayList<ModelingProcess>();
 
             list.add(proc);
-            event_process_map.put(an.activateOn(), list);
+            event_activate_process_map.put(an.activateOn(), list);
           } else
             list.add(proc);
 
